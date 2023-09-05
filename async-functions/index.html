@@ -1,0 +1,61 @@
+<script>
+  const server = {
+    people: [
+      {
+        name: 'Odin',
+        age: 20,
+      },
+      {
+        name: 'Thor',
+        age: 35,
+      },
+      {
+        name: 'Freyja',
+        age: 29,
+      },
+    ],
+
+    getPeople() {
+      return new Promise((resolve, reject) => {
+        // Simulating a delayed network call to the server
+        setTimeout(() => {
+          resolve(this.people)
+        }, 2000)
+      })
+    },
+  }
+
+  function getPersonsInfo(name) {
+    return server.getPeople().then((people) => {
+      return people.find((person) => {
+        return person.name === name
+      })
+    })
+  }
+
+  async function getPersonsInfoAsync(name) {
+    const people = await server.getPeople()
+    const person = people.find((person) => {
+      return person.name === name
+    })
+    return person
+  }
+
+  // Error handling for async function call (which is really a promise)
+  getPersonsInfoAsync('Odin').catch((err) => {
+    console.log(err)
+  })
+
+  // Try/catch is an easy way to handle errors without appending .catch() after your function calls
+  async function getPersonsInfoTryCatch(name) {
+    try {
+      const people = await server.getPeople()
+      const person = people.find((person) => {
+        return person.name
+      })
+      return person
+    } catch (error) {
+      console.log(error)
+    }
+  }
+</script>

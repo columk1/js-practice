@@ -1,0 +1,121 @@
+<!-- Adjust the width of a bar -->
+<!--<p>Drag the bar to change its width:</p>
+<div style="background: orange; width: 60px; height: 20px"></div>
+<script>
+  let lastX // Tracks the last observed mouse X position
+  let bar = document.querySelector('div')
+  bar.addEventListener('mousedown', (event) => {
+    if (event.button == 0) {
+      lastX = event.clientX
+      window.addEventListener('mousemove', moved)
+      event.preventDefault() // Prevent selection
+    }
+  })
+
+  function moved(event) {
+    if (event.buttons == 0) {
+      window.removeEventListener('mousemove', moved)
+    } else {
+      let dist = event.clientX - lastX
+      let newWidth = Math.max(10, bar.offsetWidth + dist)
+      bar.style.width = newWidth + 'px'
+      lastX = event.clientX
+    }
+  }
+</script> -->
+
+<!-- Place a dot anywhere on a page -->
+<!--<style>
+  body {
+    height: 200px;
+    background: beige;
+  }
+  .dot {
+    height: 8px;
+    width: 8px;
+    border-radius: 4px; /* rounds corners */
+    background: blue;
+    position: absolute;
+  }
+</style>
+<script>
+  window.addEventListener('click', (event) => {
+    let dot = document.createElement('div')
+    dot.className = 'dot'
+    dot.style.left = event.pageX - 4 + 'px'
+    dot.style.top = event.pageY - 4 + 'px'
+    document.body.appendChild(dot)
+  })
+</script> -->
+
+<!-- Touch events, creates a circle under any finger that touches the screen -->
+<!--<style>
+    dot { position: absolute; display: block;
+          border: 2px solid red; border-radius: 50px;
+          height: 100px; width: 100px; }
+  </style>
+  <p>Touch this page</p>
+  <script>
+    function update(event) {
+      for (let dot; dot = document.querySelector("dot");) {
+        dot.remove();
+      }
+      for (let i = 0; i < event.touches.length; i++) {
+        let {pageX, pageY} = event.touches[i];
+        let dot = document.createElement("dot");
+        dot.style.left = (pageX - 50) + "px";
+        dot.style.top = (pageY - 50) + "px";
+        document.body.appendChild(dot);
+      }
+    }
+    window.addEventListener("touchstart", update);
+    window.addEventListener("touchmove", update);
+    window.addEventListener("touchend", update);
+  </script> -->
+
+<!-- You'll ofen want to call preventDefault in touch events handlers to override the browser's default behavior. 
+  (which may include scrolling the page on swiping) -->
+
+<!-- Scrolling progress bar at top of page -->
+<!--<style>
+  #progress {
+    border-bottom: 2px solid blue;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+</style>
+<div id="progress"></div>
+<script>
+  // Create some content
+  document.body.appendChild(
+    document.createTextNode('supercalifragilisticexpialidocious '.repeat(1000))
+  )
+
+  let bar = document.querySelector('#progress')
+  window.addEventListener('scroll', () => {
+    let max = document.body.scrollHeight - innerHeight
+    bar.style.width = `${(pageYOffset / max) * 100}%`
+  })
+</script> -->
+
+<!-- Displays help text for the text field that currently has focus -->
+
+<!-- <p>Name: <input type="text" data-help="Your full name"></p>
+<p>Age: <input type="text" data-help="Your age in years"></p>
+<p id="help"></p>
+
+<script>
+  let help = document.querySelector("#help");
+  let fields = document.querySelectorAll("input");
+  for (let field of Array.from(fields)) {
+    field.addEventListener("focus", event => {
+      let text = event.target.getAttribute("data-help");
+      help.textContent = text;
+    });
+    field.addEventListener("blur", event => {
+      help.textContent = "";
+    });
+  }
+</script> -->
