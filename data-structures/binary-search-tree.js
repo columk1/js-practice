@@ -26,30 +26,38 @@ const Tree = (arr) => {
   // Main root variable
   let root = buildTree(arr)
 
-  const insertNode = (value, rootNode = root) => {
+  function insertVal(value) {
+    this.root = _insertNode(value)
+  }
+
+  const _insertNode = (value, rootNode = root) => {
     if (rootNode === null) return (rootNode = Node(value))
 
     if (value < rootNode.data) {
-      rootNode.left = insertNode(value, rootNode.left)
+      rootNode.left = _insertNode(value, rootNode.left)
     } else if (value > rootNode.data) {
-      rootNode.right = insertNode(value, rootNode.right)
+      rootNode.right = _insertNode(value, rootNode.right)
     }
     return rootNode
   }
 
-  const deleteNode = (value, rootNode = root) => {
+  function deleteVal(value) {
+    this.root = _deleteNode(value)
+  }
+
+  const _deleteNode = (value, rootNode = root) => {
     if (rootNode === null) return null
 
     if (value < rootNode.data) {
-      rootNode.left = deleteNode(value, rootNode.left)
+      rootNode.left = _deleteNode(value, rootNode.left)
     } else if (value > rootNode.data) {
-      rootNode.right = deleteNode(value, rootNode.right)
+      rootNode.right = _deleteNode(value, rootNode.right)
     } else {
       return rootNode.left === null
         ? rootNode.right
         : rootNode.right === null
         ? rootNode.left
-        : deleteNodeWithChildren(rootNode)
+        : _deleteNodeWithChildren(rootNode)
     }
     return rootNode
   }
@@ -63,9 +71,9 @@ const Tree = (arr) => {
     return minV
   }
 
-  const deleteNodeWithChildren = (node) => {
+  const _deleteNodeWithChildren = (node) => {
     node.data = minValue(node.right)
-    node.right = deleteNode(node.data, node.right)
+    node.right = _deleteNode(node.data, node.right)
     return node
   }
 
@@ -185,14 +193,14 @@ const Tree = (arr) => {
     else return isBalanced(node.left) && isBalanced(node.right)
   }
 
-  const rebalance = () => {
-    if (!isBalanced()) return (root = buildTree(inOrder()))
+  function rebalance() {
+    if (!isBalanced()) this.root = buildTree(inOrder())
   }
 
   return {
     root,
-    insertNode,
-    deleteNode,
+    insertVal,
+    deleteVal,
     find,
     levelOrder,
     preOrder,
@@ -219,19 +227,9 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 }
 
 const tree = Tree([1, 2, 4, 5, 6, 7, 8, 9])
-tree.insertNode(3)
-tree.insertNode(10)
-tree.deleteNode(2)
+tree.insertVal(3)
+tree.insertVal(10)
+tree.deleteVal(2)
 prettyPrint(tree.root)
-
-// ** Problem here **
-tree.rebalance()
-
-// 'root' variable isn't updated by tree.rebalance, tree.root is still the old tree
-// I don't really understand because most of the functions (insert, delete, etc)
-// are altering or returning a new root and tree.root updates with those.
-// If anything rebalance is much simpler and more explicit.
+tree.rebalance(tree)
 prettyPrint(tree.root)
-
-// This shows what the tree should look like after rebalance:
-// prettyPrint(tree.rebalance())
