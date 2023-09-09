@@ -2,83 +2,83 @@
 Balanced Binary Search Tree
 */
 
-const Node = (data, left = null, right = null) => {
-  return {
-    data: data,
-    left: left,
-    right: right,
+class Node {
+  constructor(data = null, left = null, right = null) {
+    this.data = data
+    this.left = left
+    this.right = right
   }
 }
 
-const Tree = (arr) => {
-  const buildTree = (arr, start = 0, end = arr.length - 1) => {
+class Tree {
+  constructor(arr) {
+    this.root = this._buildTree(arr)
+  }
+  _buildTree(arr, start = 0, end = arr.length - 1) {
     if (start > end) return null
 
     const mid = Math.floor((start + end) / 2)
-    const root = Node(arr[mid])
+    const root = new Node(arr[mid])
 
-    root.left = buildTree(arr, start, mid - 1)
-    root.right = buildTree(arr, mid + 1, end)
+    root.left = this._buildTree(arr, start, mid - 1)
+    root.right = this._buildTree(arr, mid + 1, end)
 
     return root
   }
 
-  // Main root variable
-  let root = buildTree(arr)
+  /* 
+  Private helper functions
+  */
 
-  function insertVal(value) {
-    this.root = _insertNode(value)
-  }
-
-  const _insertNode = (value, rootNode = root) => {
-    if (rootNode === null) return (rootNode = Node(value))
-
-    if (value < rootNode.data) {
-      rootNode.left = _insertNode(value, rootNode.left)
-    } else if (value > rootNode.data) {
-      rootNode.right = _insertNode(value, rootNode.right)
-    }
-    return rootNode
-  }
-
-  function deleteVal(value) {
-    this.root = _deleteNode(value)
-  }
-
-  const _deleteNode = (value, rootNode = root) => {
-    if (rootNode === null) return null
-
-    if (value < rootNode.data) {
-      rootNode.left = _deleteNode(value, rootNode.left)
-    } else if (value > rootNode.data) {
-      rootNode.right = _deleteNode(value, rootNode.right)
-    } else {
-      return rootNode.left === null
-        ? rootNode.right
-        : rootNode.right === null
-        ? rootNode.left
-        : _deleteNodeWithChildren(rootNode)
-    }
-    return rootNode
-  }
-
-  const minValue = (rootNode) => {
-    let minV = rootNode.data
-    while (rootNode.left !== null) {
-      minV = rootNode.left.data
-      rootNode = rootNode.left
+  _minValue(root) {
+    let minV = root.data
+    while (root.left !== null) {
+      minV = root.left.data
+      root = root.left
     }
     return minV
   }
 
-  const _deleteNodeWithChildren = (node) => {
-    node.data = minValue(node.right)
-    node.right = _deleteNode(node.data, node.right)
+  _deleteNodeWithChildren(node) {
+    node.data = this._minValue(node.right)
+    node.right = this.deleteVal(node.data, node.right)
     return node
   }
 
-  const find = (value) => {
-    let pointer = root
+  /* 
+  Main functions 
+  */
+
+  insertVal(value, root = this.root) {
+    if (root === null) return (root = new Node(value))
+
+    if (value < root.data) {
+      root.left = this.insertVal(value, root.left)
+    } else if (value > root.data) {
+      root.right = this.insertVal(value, root.right)
+    }
+    return root
+  }
+
+  deleteVal(value, root = this.root) {
+    if (root === null) return null
+
+    if (value < root.data) {
+      root.left = this.deleteVal(value, root.left)
+    } else if (value > root.data) {
+      root.right = this.deleteVal(value, root.right)
+    } else {
+      return root.left === null
+        ? root.right
+        : root.right === null
+        ? root.left
+        : this._deleteNodeWithChildren(root)
+    }
+    return root
+  }
+
+  find(value) {
+    let pointer = this.root
     while (pointer !== null) {
       if (pointer.data === value) return pointer
       if (value < pointer.data) {
@@ -90,9 +90,9 @@ const Tree = (arr) => {
     return null
   }
 
-  const levelOrder = (callback) => {
-    if (root === null) return []
-    const queue = [root]
+  levelOrder(callback) {
+    if (this.root === null) return []
+    const queue = [this.root]
     const result = []
     while (queue.length > 0) {
       const node = queue.shift()
@@ -107,7 +107,7 @@ const Tree = (arr) => {
     return result
   }
 
-  const levelOrderRecursive = (callback) => {
+  levelOrderRecursive(callback) {
     const array = []
     const traverse = (node, level) => {
       if (!node) return null
@@ -124,92 +124,77 @@ const Tree = (arr) => {
     return array.flat()
   }
 
-  const preOrder = (callback) => {
-    const traversal = (rootNode = root, array = []) => {
-      if (!rootNode) return []
+  preOrder(callback) {
+    const traversal = (root = this.root, array = []) => {
+      if (!root) return []
       if (callback) {
-        callback(rootNode)
+        callback(root)
       } else {
-        array.push(rootNode.data)
+        array.push(root.data)
       }
-      traversal(rootNode.left, array)
-      traversal(rootNode.right, array)
+      traversal(root.left, array)
+      traversal(root.right, array)
       return array
     }
     return traversal()
   }
 
-  const inOrder = (callback) => {
-    const traversal = (rootNode = root, array = []) => {
-      if (!rootNode) return []
-      traversal(rootNode.left, array)
-      if (callback) callback(rootNode)
-      else array.push(rootNode.data)
-      traversal(rootNode.right, array)
+  inOrder(callback) {
+    const traversal = (root = this.root, array = []) => {
+      if (!root) return []
+      traversal(root.left, array)
+      if (callback) callback(root)
+      else array.push(root.data)
+      traversal(root.right, array)
       return array
     }
     return traversal()
   }
 
-  const postOrder = (callback) => {
-    const traversal = (rootNode = root, array = []) => {
-      if (!rootNode) return []
-      traversal(rootNode.left, array)
-      traversal(rootNode.right, array)
-      if (callback) callback(rootNode)
-      else array.push(rootNode.data)
+  postOrder(callback) {
+    const traversal = (root = this.root, array = []) => {
+      if (!root) return []
+      traversal(rootleft, array)
+      traversal(root.right, array)
+      if (callback) callback(root)
+      else array.push(root.data)
       return array
     }
     return traversal()
   }
 
   // The number of edges in the longest path connecting a node to any leaf node
-  const height = (node) => {
-    if (node === null || !node || find(node) === false) return -1
-    return Math.max(height(node.left), height(node.right)) + 1
+  height(node) {
+    if (node === null || !node || this.find(node) === false) return -1
+    return Math.max(this.height(node.left), this.height(node.right)) + 1
   }
 
   // The number of edges in the path from a node to the tree's root node
-  const depth = (node, rootNode = root, depthVal = 0) => {
-    if (!rootNode || !root) return
+  depth(node, root = this.root, depthVal = 0) {
+    if (!root || !root) return
     // Base case
-    if (node === rootNode) return depthVal
+    if (node === root) return depthVal
 
-    if (node.data < rootNode.data) {
-      return depth(node, rootNode.left, (depthVal += 1))
+    if (node.data < root.data) {
+      return this.depth(node, root.left, (depthVal += 1))
     } else {
-      return depth(node, rootNode.right, (depthVal += 1))
+      return this.depth(node, root.right, (depthVal += 1))
     }
   }
 
   // Returns true if the difference between the heights of left and right subtree of every node is not more than 1
-  const isBalanced = (node = root) => {
+  isBalanced(node = this.root) {
     if (node === null) return true
 
-    const leftHeight = height(node.left)
-    const rightHeight = height(node.right)
+    const leftHeight = this.height(node.left)
+    const rightHeight = this.height(node.right)
 
     if (Math.abs(leftHeight - rightHeight) > 1) return false
-    else return isBalanced(node.left) && isBalanced(node.right)
+    else return this.isBalanced(node.left) && this.isBalanced(node.right)
   }
 
-  function rebalance() {
-    if (!isBalanced()) this.root = buildTree(inOrder())
-  }
-
-  return {
-    root,
-    insertVal,
-    deleteVal,
-    find,
-    levelOrder,
-    preOrder,
-    inOrder,
-    postOrder,
-    height,
-    depth,
-    isBalanced,
-    rebalance,
+  rebalance() {
+    if (!this.isBalanced()) this.root = this._buildTree(this.inOrder())
   }
 }
 
@@ -226,7 +211,7 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
   }
 }
 
-const tree = Tree([1, 2, 4, 5, 6, 7, 8, 9])
+const tree = new Tree([1, 2, 4, 5, 6, 7, 8, 9])
 tree.insertVal(3)
 tree.insertVal(10)
 tree.deleteVal(2)
