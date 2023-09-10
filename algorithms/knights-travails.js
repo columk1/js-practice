@@ -4,40 +4,40 @@ Project assignment for The Odin Project
 */
 
 function KnightTravails() {
-  let graph = new Map()
-  let size = 8
+  const SIZE = 8
+  const chessboard = new Map()
 
   // Add Vertices. Creates a set of all possible chess positions. '0, 0' => []
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      graph.set(`${[i, j]}`, [])
+  for (let i = 0; i < SIZE; i++) {
+    for (let j = 0; j < SIZE; j++) {
+      chessboard.set(`${[i, j]}`, [])
     }
   }
 
-  // Add Edges. Adds an adjacency list of all possible moves from each vertex. '0, 0' => ['1, 2', '2, 1']
+  // Parse x, y coordinates of each vertex as integers for arithmetic
+  for (let [square] of chessboard) {
+    const x = parseInt(square[0]) // x
+    const y = parseInt(square[2]) // y
 
-  for (let [pos] of graph) {
-    const x = parseInt(pos[0])
-    const y = parseInt(pos[2])
+    // A list of operations to simulate all moves
+    const options = [
+      [x + 1, y + 2],
+      [x + 2, y + 1],
+      [x + 2, y - 1],
+      [x + 1, y - 2],
+      [x - 1, y - 2],
+      [x - 2, y - 1],
+      [x - 2, y + 1],
+      [x - 1, y + 2],
+    ]
 
-    // Keys are hours on a clockface to help visualize the direction in which each operation leads
-    const options = {
-      1: [x + 1, y + 2],
-      2: [x + 2, y + 1],
-      4: [x + 2, y - 1],
-      5: [x + 1, y - 2],
-      7: [x - 1, y - 2],
-      8: [x - 2, y - 1],
-      10: [x - 2, y + 1],
-      11: [x - 1, y + 2],
-    }
-
-    for (let option in options) {
-      const move = options[option].toString()
-      if (graph.has(move)) graph.get(pos).push(move)
-    }
+    // Add Edges. Adds an adjacency list of all possible moves from each vertex. '0, 0' => ['1, 2', '2, 1']
+    options.forEach((option) => {
+      const move = option.toString()
+      if (chessboard.has(move)) chessboard.get(square).push(move)
+    })
   }
-
+  // Print result to console, called when the algorithm is finished
   const printResult = (path) => {
     console.log(`=> You made it in ${path.length - 1} moves! Here's your path:`)
     path.forEach((move) => {
@@ -45,33 +45,36 @@ function KnightTravails() {
     })
   }
 
-  return {
-    board: graph,
-    // Find the shortest path from start to end
-    knightMoves(start, end) {
-      const queue = []
-      const paths = []
-      const visited = new Set()
+  // Find the shortest path from start to end. Time complexity: O(V+E)
+  function knightMoves(start, end) {
+    const queue = []
+    const paths = []
+    const visited = new Set()
 
-      queue.push([start, [start]])
+    queue.push([start, [start]]) // -> ['x, y', ['x, y']]
 
-      while (queue.length > 0) {
-        let [currentPosition, path] = queue.shift()
-        visited.add(currentPosition)
+    while (queue.length > 0) {
+      let [currentPosition, path] = queue.shift()
+      visited.add(currentPosition)
 
-        if (currentPosition === end) {
-          return printResult(path)
-        }
-
-        const possibleMoves = this.board.get(currentPosition) // moves -> ['4,2', '3,3', ...]
-
-        for (let move of possibleMoves) {
-          if (!visited.has(move)) queue.push([move, [...path, move]])
-          // queue -> ['4,2', ['0,0', '2,1', '4,2']]
-        }
+      // Terminal condition
+      if (currentPosition === end) {
+        return printResult(path)
       }
-      return paths
-    },
+
+      const possibleMoves = chessboard.get(currentPosition) // -> ['4,2', '3,3', ...]
+
+      for (let move of possibleMoves) {
+        if (!visited.has(move)) queue.push([move, [...path, move]])
+        console.log(queue)
+        // queue -> ['4,2', ['0,0', '2,1', '4,2']]
+      }
+    }
+    return paths
+  }
+
+  return {
+    knightMoves,
   }
 }
 
