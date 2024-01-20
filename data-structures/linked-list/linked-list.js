@@ -1,10 +1,11 @@
 import Node from './node.js'
 
-export default () => {
-  let HEAD = null
-  let length = 0
+export default (initialValue) => {
+  let HEAD = Node(initialValue) || null
+  let length = initialValue ? 1 : 0
 
   const append = (value) => {
+    console.log('APPENDING')
     const newNode = Node(value)
     length++
     if (HEAD === null) {
@@ -27,7 +28,7 @@ export default () => {
     HEAD = newNode
   }
 
-  const size = () => (HEAD ? length : null)
+  const size = () => length
 
   const head = () => (HEAD ? HEAD.value : null)
 
